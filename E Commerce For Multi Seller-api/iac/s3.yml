@@ -1,0 +1,55 @@
+# Resources:
+#   KABucket:
+#     Type: AWS::S3::Bucket
+#     UpdateReplacePolicy: Retain
+#     DeletionPolicy: Retain
+#     Properties:
+#       BucketName: ${self:service}-${sls:stage}
+#       # AccessControl: PublicRead
+#       PublicAccessBlockConfiguration:
+#         BlockPublicAcls: false
+#         BlockPublicPolicy: false
+#         IgnorePublicAcls: false
+#         RestrictPublicBuckets: false
+#       OwnershipControls:
+#           Rules:
+#             - ObjectOwnership: BucketOwnerPreferred
+#       Tags:
+#         - Key: Environment
+#           Value: ${sls:stage}
+#   S3BucketPolicy:
+#       Type: AWS::S3::BucketPolicy
+#       Properties:
+#         Bucket: !Ref KABucket
+#         PolicyDocument:
+#           Version: '2012-10-17'
+#           Statement:
+#             - Effect: Allow
+#               Principal: '*'
+#               Action: 's3:GetObject'
+#               Resource: !Sub ${KABucket.Arn}/public/*
+      # CorsConfiguration:
+      #   CorsRules:
+      #     -
+      #       AllowedOrigins:
+      #         - '*'
+      #       AllowedHeaders:
+      #         - '*'
+      #       AllowedMethods:
+      #         - GET
+      #         - PUT
+      #         - POST
+      #         - DELETE
+      #         - HEAD
+      #       MaxAge: 3000
+      # AccessControl: PublicRead
+      # VersioningConfiguration:
+      #   Status: Enabled
+      # PublicAccessBlockConfiguration:
+      #   BlockPublicAcls: true
+      #   BlockPublicPolicy: true
+      #   IgnorePublicAcls: true
+      #   RestrictPublicBuckets: true
+      # OwnershipControls:
+      #   Rules:
+      #     - ObjectOwnership: BucketOwnerPreferred

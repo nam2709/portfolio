@@ -1,0 +1,274 @@
+ConsumerSubmitVendor:
+  handler: functions/vendors/userSubmitVendor.submitVendor
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+      Resource:
+        - !GetAtt VendorsTable.Arn
+  events:
+    - http:
+        path: /vendors
+        method: post
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+# updateVendor:
+#   handler: functions/vendors/updateVendor.updateVendor
+#   events:
+#     - http:
+#         path: /vendors/{id}
+#         method: post
+#         cors: true
+#         authorizer:
+#           name: UserAuthorizer
+#           type: COGNITO_USER_POOLS
+#           arn: !GetAtt UserPool.Arn
+#           claims:
+#             - email
+
+getVendor:
+  handler: functions/vendors/getVendor.getVendor
+  description: public information for a vendor
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt VendorsTable.Arn
+  events:
+    - http:
+        path: /vendors/{id}
+        method: get
+        cors: true
+        # authorizer:
+        #  name: UserAuthorizer
+        #  type: COGNITO_USER_POOLS
+        #  arn: !GetAtt UserPool.Arn
+        #  claims:
+        #    - sub
+
+######### ADMIN ###################
+adminReviewVendor:
+  handler: functions/vendors/adminReviewVendor.reviewVendor
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+      Resource:
+        - !GetAtt VendorsTable.Arn
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminGetUser
+        - cognito-idp:AdminAddUserToGroup
+        - cognito-idp:AdminUpdateUserAttributes
+      Resource:
+        - !GetAtt UserPool.Arn
+  events:
+    - http:
+        path: /admin/vendors/{id}
+        method: post
+        cors: true
+        authorizer:
+          name: AdminAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+          #  - email
+          #  - vendorId
+          #  - admin
+
+adminDisableVendor:
+  handler: functions/vendors/adminDisableVendor.disableVendor
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+      Resource:
+        - !GetAtt VendorsTable.Arn
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminGetUser
+        - cognito-idp:AdminAddUserToGroup
+        - cognito-idp:AdminUpdateUserAttributes
+      Resource:
+        - !GetAtt UserPool.Arn
+  events:
+    - http:
+        path: /admin/disable-vendors/{id}
+        method: post
+        cors: true
+        authorizer:
+          name: AdminAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+          #  - email
+          #  - vendorId
+          #  - admin
+
+
+############ VENDOR SIGNIN ################
+vendorSignIn:
+  handler: functions/vendors/vendorSignIn.vendorSignIn
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt VendorsTable.Arn
+    - Effect: 'Allow'
+      Action:
+        - cognito-idp:InitiateAuth
+      Resource:
+        - !GetAtt UserPool.Arn
+  events:
+    - http:
+        path: /vendor/signin
+        method: post
+        cors: true
+
+########## VENDOR UPDATE PROFILE ################
+updateVendorProfile:
+  handler: functions/vendors/vendor-update-profile.vendorUpdateProfile
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:UpdateItem
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt VendorsTable.Arn
+  events:
+    - http:
+        path: /vendor
+        method: put
+        cors: true
+        authorizer:
+          name: VendorAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+            - email
+            - custom:vendorId
+
+
+vendorListOrders:
+  handler: functions/vendors/vendor-list-orders.vendorListOrders
+  description: list all order by vendorId
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+      Resource:
+        - !GetAtt OrdersTable.Arn
+        - !Sub ${OrdersTable.Arn}/index/*
+    - Effect: 'Allow'
+      Action:
+        - cognito-idp:GetUser
+        - cognito-idp:AdminGetUser
+      Resource:
+        - !GetAtt UserPool.Arn
+  events:
+    - http:
+        path: vendor/orders
+        method: get
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+            - custom:vendorId
+
+vendorGetOrder:
+  handler: functions/vendors/vendor-get-order.vendorGetOrder
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:Query
+      Resource:
+        - !GetAtt OrdersTable.Arn
+    - Effect: 'Allow'
+      Action:
+        - cognito-idp:GetUser
+        - cognito-idp:AdminGetUser
+      Resource:
+        - !GetAtt UserPool.Arn
+  events:
+    - http:
+        path: vendor/orders/{id}
+        method: get
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+            - custom:vendorId
+
+vendorUpdateOrder:
+  handler: functions/vendors/vendor-update-order.vendorUpdateOrder
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:Query
+        - dynamodb:UpdateItem
+      Resource:
+        - !GetAtt OrdersTable.Arn
+        - !GetAtt ProductsTable.Arn
+    - Effect: 'Allow'
+      Action:
+        - cognito-idp:GetUser
+        - cognito-idp:AdminGetUser
+      Resource:
+        - !GetAtt UserPool.Arn
+  events:
+    - http:
+        path: vendor/orders/{id}
+        method: put
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+            - custom:vendorId
+
+vendorlistProducts:
+  handler: functions/vendors/vendor-list-products.vendorListProducts
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+      Resource:
+        - !GetAtt ProductsTable.Arn
+        - !Sub ${ProductsTable.Arn}/index/*
+  events:
+    - http:
+        path: vendor/products
+        method: get
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+            - custom:vendorId

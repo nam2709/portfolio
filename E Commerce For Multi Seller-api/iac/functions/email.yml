@@ -1,0 +1,78 @@
+onCreateEmailVendor:
+  handler: functions/email/onEmailVendor.createEmail
+  package:
+      include:
+        - functions/email/email-templates/thankvendorsignup.html
+        - functions/email/email-templates/congratulatevendor.html
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - ses:SendEmail
+        - ses:SendRawEmail
+      Resource: "*"
+  events:
+    - stream:
+        type: dynamodb
+        arn: !GetAtt VendorsTable.StreamArn
+        batchSize: 10
+        startingPosition: "LATEST"
+        filterPatterns:
+          - eventName:
+              - INSERT
+              - MODIFY
+
+onCreateEmailOrder:
+  handler: functions/email/onEmailOrder.createEmail
+  package:
+      include:
+        - functions/email/email-templates/orderconfirmation.html
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - ses:SendEmail
+        - ses:SendRawEmail
+      Resource: "*"
+  events:
+    - stream:
+        type: dynamodb
+        arn: !GetAtt OrdersTable.StreamArn
+        batchSize: 10
+        startingPosition: "LATEST"
+        filterPatterns:
+          - eventName:
+              - INSERT
+              - MODIFY
+
+onCreateEmailProduct:
+  handler: functions/email/onEmailProduct.createEmail
+  package:
+      include:
+        - functions/email/email-templates/createproduct.html
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - ses:SendEmail
+        - ses:SendRawEmail
+      Resource: "*"
+  events:
+    - stream:
+        type: dynamodb
+        arn: !GetAtt ProductsTable.StreamArn
+        batchSize: 10
+        startingPosition: "LATEST"
+        filterPatterns:
+          - eventName:
+              - INSERT
+              - MODIFY

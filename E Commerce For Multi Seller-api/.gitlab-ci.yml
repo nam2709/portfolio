@@ -1,0 +1,77 @@
+image: node:20-alpine
+
+stages:
+  - build
+  - test
+  - deploy-dev
+  - deploy
+
+cache:
+  paths:
+    - node_modules/
+    - yarn.lock
+
+build:
+  stage: build
+  script:
+    - yarn install --silent --no-progress
+
+# format test:
+#   stage: test
+#   before_script:
+#     - yarn
+#   script:
+#     - yarn format:check
+
+
+# lint test:
+#   stage: test
+#   before_script:
+#     - yarn
+#   script:
+#     - yarn lint
+
+
+unit test:
+  stage: test
+  before_script:
+    - yarn
+  script:
+    - yarn test:unit
+
+integration test:
+  stage: test
+  before_script:
+    - yarn
+  script:
+    - yarn test:int
+
+end to end test:
+  stage: test
+  before_script:
+    - yarn
+  script:
+    - yarn test:e2e
+
+deploy dev:
+  stage: deploy-dev
+  before_script:
+    - yarn
+  script:
+    - yarn deploy:dev
+  environment:
+    name: dev
+  only:
+    - nam_deploy
+    - v1
+
+deploy production:
+  stage: deploy
+  before_script:
+    - yarn
+  script:
+    - yarn deploy:prod
+  environment:
+    name: production
+  only:
+    - v1

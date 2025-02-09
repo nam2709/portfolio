@@ -1,0 +1,173 @@
+getCategory:
+  handler: functions/categories/getCategory.getCategory
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+      Resource: !GetAtt CategoriesTable.Arn
+  events:
+    - http:
+        path: category/{categoryId}
+        method: get
+        cors: true
+
+createCategory:
+  handler: functions/categories/createCategory.createCategory
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+      Resource: !GetAtt CategoriesTable.Arn
+  events:
+    - http:
+        path: categories
+        method: post
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+createCategoryLang:
+  handler: functions/categories/createCategoryLang.createCategoryLang
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+      Resource: !GetAtt CategoriesTable.Arn
+  events:
+    - http:
+        path: categories-lang
+        method: post
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+addProductToCategory:
+  handler: functions/categories/addProductToCategory.addProductToCategory
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+      Resource: !GetAtt CategoriesTable.Arn
+  events:
+    - http:
+        path: categories/{categoryId}/products/{productId}
+        method: post
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+remove-product-from-category:
+  handler: functions/categories/removeProductFromCategory.removeProductFromCategory
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:DeleteItem
+      Resource: !GetAtt CategoriesTable.Arn
+  events:
+    - http:
+        path: categories/{categoryId}/products/{productId}
+        method: delete
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+listCategories:
+  handler: functions/categories/listCategories.listCategories
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+      Resource: !GetAtt CategoriesTable.Arn
+  events:
+    - http:
+        path: categories
+        method: get
+        cors: true
+
+listProductsByCategory:
+  handler: functions/categories/listProductsByCategory.listProductsByCategory
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt CategoriesTable.Arn
+        - !GetAtt ProductsTable.Arn
+  events:
+    - http:
+        path: categories/{categoryId}/products
+        method: get
+        cors: true
+
+listCategoriesByProduct:
+  handler: functions/categories/listCategoriesByProduct.listCategoriesByProduct
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt CategoriesTable.Arn
+        - !Sub ${CategoriesTable.Arn}/index/*
+  events:
+    - http:
+        path: products/{id}/categories
+        method: get
+        cors: true
+
+AdminUpdateCategory:
+  handler: functions/categories/updateCategory.updateCategory
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:UpdateItem
+      Resource: !GetAtt CategoriesTable.Arn
+  events:
+    - http:
+        path: category/{categoryId}
+        method: put
+        cors: true
+        authorizer:
+          name: AdminAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+AdminDeleteCategory:
+  handler: functions/categories/deleteCategory.deleteCategory
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:DeleteItem
+      Resource: !GetAtt CategoriesTable.Arn
+  events:
+    - http:
+        path: category/{categoryId}
+        method: delete
+        cors: true
+        authorizer:
+          name: AdminAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub

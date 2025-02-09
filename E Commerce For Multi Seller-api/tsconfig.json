@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "types": ["vite", "node", "vitest/globals"],
+    "module": "ES6",
+    "target": "ES2022",
+    "moduleResolution": "Node",
+    "baseUrl": ".",
+    "allowJs": true,
+    "checkJs": true,
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "allowArbitraryExtensions": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "strict": false,
+    "noImplicitAny": false,
+    "paths": {
+      "services/*": ["common/services/*"],
+      "adapters/*": ["common/adapters/*"],
+      "entities/*": ["common/entities/*"],
+      "libs/*": ["libs/*"],
+    }
+  },
+  "exclude": ["node_modules", "dist", "build"]
+}

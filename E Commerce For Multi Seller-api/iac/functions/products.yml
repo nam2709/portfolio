@@ -1,0 +1,152 @@
+createProduct:
+  handler: functions/products/createProduct.createProduct
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+      Resource:
+        - !GetAtt ProductsTable.Arn
+  events:
+    - http:
+        path: products
+        method: post
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+getProduct:
+  handler: functions/products/getProduct.getProduct
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt ProductsTable.Arn
+  events:
+    - http:
+        path: products/{id}
+        method: get
+        cors: true
+
+deleteProduct:
+  handler: functions/products/deleteProduct.deleteProduct
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:DeleteItem
+        - dynamodb:Query
+      Resource:
+        - !GetAtt ProductsTable.Arn
+  events:
+    - http:
+        path: products/{id}
+        method: delete
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+
+################ VENDOR ################
+
+vendor-get-product:
+  handler: functions/vendors/vendor-get-product.vendorGetProduct
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt ProductsTable.Arn
+  events:
+    - http:
+        path: vendor/products/{id}
+        method: get
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+vendorUpdateProduct:
+  handler: functions/products/vendorUpdateProduct.vendorUpdateProduct
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:UpdateItem
+      Resource:
+        - !GetAtt ProductsTable.Arn
+  events:
+    - http:
+        path: vendor/products/{id}
+        method: put
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+################## USER #################
+searchProducts:
+  handler: functions/products/searchProducts.searchProducts
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:BatchGetItem
+      Resource:
+        - !GetAtt ProductsTable.Arn
+        - !Sub ${ProductsTable.Arn}/index/*
+  events:
+    - http:
+        path: products
+        method: get
+        cors: true
+
+############### ADMIN #################
+adminReviewProduct:
+  handler: functions/products/adminReviewProduct.reviewProduct
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:UpdateItem
+      Resource:
+        - !GetAtt ProductsTable.Arn
+  events:
+    - http:
+        path: /admin/products/
+        method: post
+        cors: true
+        authorizer:
+          name: AdminAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+adminDisableProduct:
+  handler: functions/products/adminDisableProduct.disableProduct
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:UpdateItem
+      Resource:
+        - !GetAtt ProductsTable.Arn
+  events:
+    - http:
+        path: /admin/disable-products/
+        method: post
+        cors: true
+        authorizer:
+          name: AdminAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub

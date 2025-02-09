@@ -1,0 +1,172 @@
+service: kamarket
+frameworkVersion: '3'
+configValidationMode: error
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-southeast-2'} # SYDNEY
+
+  apiGateway:
+    binaryMediaTypes:
+      - '*/*'
+
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    REGION: ${self:provider.region}
+    STAGE: ${self:provider.stage}
+
+    TABLE_ORDERS_NAME: !Ref OrdersTable
+    TABLE_ADDRESS_NAME: !Ref AddressTable
+    TABLE_CARTS_NAME: !Ref CartsTable
+    TABLE_PRODUCTS_NAME: !Ref ProductsTable
+    TABLE_CATEGORIES_NAME: !Ref CategoriesTable
+    TABLE_VENDORS_NAME: !Ref VendorsTable
+    TABLE_WISHLIST_NAME: !Ref WishlistTable
+    TABLE_REVIEW_NAME: !Ref ReviewTable
+    TABLE_COUPON_NAME: !Ref CouponTable
+    USER_POOL_ID: !Ref UserPool
+    USER_POOL_CLIENT_ID: !Ref UserPoolClient
+
+    STORAGE_NAME: ${self:custom.storageName}
+    STORAGE_ARN: arn:aws:s3:::${self:custom.storageName}
+    TABLE_STORAGE_NAME: !Ref StorageTable
+    TABLE_SETTING_NAME: !Ref SettingTable
+    # TABLE_SHIP_NAME: !Ref ShipTable
+    # TABLE_PAYMENT_NAME: !Ref PaymentTable
+    # TABLE_ANALYTIC_NAME: !Ref AnalyticTable
+
+# stages:
+#   dev:
+#     STORAGE_ARN:
+
+# Create an optimized package for our functions
+package:
+  individually: true
+
+functions:
+  # - ${file(iac/functions/email.yml)}
+  - ${file(iac/functions/auth.yml)}
+  - ${file(iac/functions/vendors.yml)}
+  - ${file(iac/functions/products.yml)}
+  - ${file(iac/functions/carts.yml)}
+  - ${file(iac/functions/orders.yml)}
+  - ${file(iac/functions/wishlist.yml)}
+  - ${file(iac/functions/address.yml)}
+  # - ${file(iac/functions/review.yml)}
+  - ${file(iac/functions/categories.yml)}
+  - ${file(iac/functions/admin.yml)}
+  - ${file(iac/functions/collections.yml)}
+  - ${file(iac/functions/setting.yml)}
+  # - ${file(iac/functions/coupon.yml)}
+
+  - ${file(iac/functions/s3.yml)}
+
+resources:
+  # API Gateway
+  #- ${file(iac/apigateway.yml)}
+  # S3
+  # API Gateway Errors
+  # DynamoDB
+  - ${file(iac/dynamodb.yml)}
+  # Cognito
+  - ${file(iac/cognito.yml)}
+  # - ${file(iac/s3.yml)}
+  #- ${file(iac/cognito-identity-providers.yml)}
+  # Cognito Identity Providers
+  # SES
+  # SQS
+  # SNS
+  # EventBridge
+  - ${file(iac/events.yml)}
+
+# appSync:
+#   ${file(iac/appsync.yml)}
+
+plugins:
+  - serverless-iam-roles-per-function
+  - serverless-esbuild
+  - serverless-export-env
+  - serverless-offline
+  # - serverless-lift
+  - serverless-plugin-canary-deployments
+
+custom:
+  tableVendorName: ${self:service}-${sls:stage}-vendors
+  tableCartName: ${self:service}-${sls:stage}-carts
+  tableProductName: ${self:service}-${sls:stage}-products
+  tableOrderName: ${self:service}-${sls:stage}-orders
+  tableWishlistName: ${self:service}-${sls:stage}-wishlist
+  tableAddressName: ${self:service}-${sls:stage}-address
+  tableReviewName: ${self:service}-${sls:stage}-review
+  tableCategoryName: ${self:service}-${sls:stage}-category
+  tableCouponName: ${self:service}-${sls:stage}-coupon
+  tablePaymentName: ${self:service}-${sls:stage}-payment
+  tableShipName: ${self:service}-${sls:stage}-ship
+  tableAnalyticName: ${self:service}-${sls:stage}-analytic
+
+  userPoolName: ${self:service}-${self:provider.stage}-user-pool
+  userPoolClientName: web
+  userPoolDomain: ${self:service}-${self:provider.stage}
+
+  storageName: ${self:service}-${sls:stage}-storage
+  tableStorageName: ${self:service}-${sls:stage}-storage
+  tableSettingName: ${self:service}-${sls:stage}-setting
+
+  esbuild:
+    bundle: true
+    minify: true
+    target: node20
+    packager: yarn
+
+  # bundle:
+  #   linting: true
+  #   esbuild: true
+  #   tsConfig: tsconfig.json
+  #   packager: yarn
+  #   disableForkTsChecker: true
+
+  serverless-offline:
+    httpPort: 4000
+    noPrependStageInUrl: true
+    reloadHandler: true
+
+  export-env:
+    filename: .env
+    overwrite: false
+    enableOffline: true
+
+  # appsync-simulator:
+  #   port: 20002
+  #   wsPort: 20003
+  #   location: '.webpack/service'
+
+# build:
+#   esbuild:
+#     bundle: true
+#     minify: true
+#     sourcemap: true
+#     target: node20
+#     # packager: yarn
+#     tsconfig: 'tsconfig.json'
+
+# constructs:
+#   images:
+#     type: storage
+#     extensions:
+#       bucket:
+#         Properties:
+#           #AccessControl: PublicRead
+#           # OnwershipControls: BucketOwnerPreferred
+#           BucketName: ${self:service}-${sls:stage}-images
+#           # AccessControl: PublicRead
+#           PublicAccessBlockConfiguration:
+#             BlockPublicAcls: false
+#             BlockPublicPolicy: false
+#             IgnorePublicAcls: false
+#             RestrictPublicBuckets: false
+#           OwnershipControls:
+#               Rules:
+#                 - ObjectOwnership: BucketOwnerPreferred

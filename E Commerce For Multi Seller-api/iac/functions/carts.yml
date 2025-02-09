@@ -1,0 +1,114 @@
+ConsumerAdToCart:
+  handler: functions/carts/user-add-to-cart.addToCart
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+      Resource: !GetAtt CartsTable.Arn
+  events:
+    - http:
+        path: /carts
+        method: post
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+           - sub
+
+ConsumerUpdateCartItem:
+  handler: functions/carts/user-update-cart.updateCart
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:UpdateItem
+      Resource: !GetAtt CartsTable.Arn
+  events:
+    - http:
+        path: /carts
+        method: put
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+           - sub
+
+
+ConsumerRemoveItemFromCart:
+  handler: functions/carts/user-remove-from-cart.removeFromCart
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:DeleteItem
+      Resource: !GetAtt CartsTable.Arn
+  events:
+    - http:
+        path: /carts/{id}
+        method: delete
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+           - sub
+
+
+ConsumerGetCart:
+  handler: functions/carts/consumer-get-cart.getCart
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt CartsTable.Arn
+        - !GetAtt ProductsTable.Arn
+  events:
+    - http:
+        path: /carts
+        method: get
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+ConsumerCheckout:
+  handler: functions/carts/user-checkout.checkout
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:BatchGet
+        - dynamodb:BatchWriteItem
+      Resource:
+        - !GetAtt CartsTable.Arn
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:BatchWriteItem
+      Resource: !GetAtt OrdersTable.Arn
+    - Effect: 'Allow'
+      Action:
+        - events:PutEvents
+      Resource: !GetAtt KAEventBus.Arn
+  events:
+    - http:
+        path: /carts/checkout
+        method: post
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+

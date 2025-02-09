@@ -1,0 +1,74 @@
+signIn:
+  handler: functions/auth/signIn.signIn
+  events:
+    - http:
+        path: auth/signin
+        method: post
+        cors: true
+
+signUp:
+  handler: functions/auth/signUp.signUp
+  events:
+    - http:
+        path: auth/signup
+        method: post
+        cors: true
+
+confirmSignUp:
+  handler: functions/auth/confirmSignUp.confirmSignUp
+  events:
+    - http:
+        path: auth/confirm
+        method: post
+        cors: true
+
+listUsersInGroup:
+  handler: functions/auth/listUsersInGroup.listUsersInGroup
+  events:
+    - http:
+        path: auth/admin/group/{groupName}
+        method: get
+        cors: true
+
+me:
+  handler: functions/auth/me.me
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - cognito-idp:GetUser
+        - cognito-idp:AdminGetUser
+      Resource: !GetAtt UserPool.Arn
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:GetItem
+      Resource: !GetAtt AddressTable.Arn
+  events:
+    - http:
+        path: /me
+        method: get
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+updateProfile:
+    handler: functions/auth/updateProfile.updateProfile
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - cognito-idp:AdminUpdateUserAttributes
+        Resource: !GetAtt UserPool.Arn
+    events:
+      - http:
+          path: /me
+          method: put
+          cors: true
+          authorizer:
+            name: UserAuthorizer
+            type: COGNITO_USER_POOLS
+            arn: !GetAtt UserPool.Arn
+            claims:
+              - sub

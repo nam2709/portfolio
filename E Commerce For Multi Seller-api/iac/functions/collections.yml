@@ -1,0 +1,7 @@
+listProductsInCollection:
+    handler: functions/collections/listCollectionsByCategories.listCollectionsByCategories
+    events:
+      - http:
+          path: /collections
+          method: get
+          cors: true

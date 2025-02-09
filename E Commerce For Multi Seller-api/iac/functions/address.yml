@@ -1,0 +1,77 @@
+ConsumerCreateAddress:
+  handler: functions/address/createAddress.createAddress
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+      Resource: !GetAtt AddressTable.Arn
+  events:
+    - http:
+        path: address
+        method: post
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+ConsumerUpdateAddress:
+  handler: functions/address/updateAddress.updateAddress
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:UpdateItem
+      Resource: !GetAtt AddressTable.Arn
+  events:
+    - http:
+        path: address/{id}
+        method: put
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+ConsumerDeleteAddress:
+  handler: functions/address/deleteAddress.deleteAddress
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:DeleteItem
+      Resource: !GetAtt AddressTable.Arn
+  events:
+    - http:
+        path: address/{id}
+        method: delete
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+ConsumerListAddresses:
+  handler: functions/address/listAddresses.listAddresses
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+      Resource: !GetAtt AddressTable.Arn
+  events:
+    - http:
+        path: address
+        method: get
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+        #   scopes:
+        #     - sub

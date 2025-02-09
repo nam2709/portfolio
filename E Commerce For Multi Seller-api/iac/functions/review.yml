@@ -1,0 +1,45 @@
+ConsumerAddReview:
+  handler: functions/review/user-add-review.addReview
+  description: User add a review after buying a product
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+      Resource:
+        - !GetAtt ReviewTable.Arn
+  events:
+    - http:
+        path: review
+        method: post
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          #claims:
+          #  - sub
+          #scopes:
+          #  - sub
+
+listReviews:
+  handler: functions/review/list-reviews.listReviews
+  description: List all reviews
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+      Resource:
+        - !GetAtt ReviewTable.Arn
+  events:
+    - http:
+        path: review/{id}
+        method: get
+        cors: true
+        #authorizer:
+        #  name: UserAuthorizer
+        #  type: COGNITO_USER_POOLS
+        #  arn: !GetAtt UserPool.Arn
+          #claims:
+          #  - sub
+          #scopes:
+          #  - sub

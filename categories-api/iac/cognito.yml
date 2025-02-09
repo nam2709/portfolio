@@ -1,0 +1,198 @@
+Resources:
+  ################
+  # User Pools   #
+  ################
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      UserPoolName: ${self:custom.userPoolName}
+      Schema:
+        # - Name: email
+        #   Required: true
+        #   Mutable: true
+        # - Name: phone_number
+        #   Required: false
+        #   Mutable: true
+        # - Name: name
+        #   Required: false
+        #   Mutable: true
+        # - Name: address
+        #   Required: false
+        #   Mutable: true
+        - Name: vendorId
+          Required: false
+          Mutable: true
+          AttributeDataType: String
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+        InviteMessageTemplate:
+          EmailMessage: Your username is {username} and temporary password is {####}.
+          EmailSubject: Your temporary password
+          SMSMessage: Your username is {username} and temporary password is {####}.
+        UnusedAccountValidityDays: 30
+      #EmailConfiguration:
+      #  From: "hi@karmarket.vn"
+      #  ReplyToEmailAddress: "noreply@kamarket.vn"
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 6
+          RequireLowercase: false
+          RequireNumbers: false
+          RequireSymbols: false
+          RequireUppercase: false
+      UsernameConfiguration:
+        CaseSensitive: false
+
+      #LambdaConfig:
+      #  CreateAuthChallenge: !GetAtt CreateAuthChallengeFunction.Arn
+      #  DefineAuthChallenge: !GetAtt DefineAuthChallengeFunction.Arn
+      #  PreAuthentication: !GetAtt PreAuthenticationFunction.Arn
+      #  PreSignUp: !GetAtt PreSignUpFunction.Arn
+      #  VerifyAuthChallengeResponse: !GetAtt VerifyAuthChallengeResponseFunction.Arn
+
+  #####################
+  # User Pool Clients #
+  #####################
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      ClientName: ${self:service}-${sls:stage}
+      UserPoolId: !Ref UserPool
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+      PreventUserExistenceErrors: ENABLED
+      GenerateSecret: false
+      IdTokenValidity: 24
+      AccessTokenValidity: 24
+      RefreshTokenValidity: 30
+      TokenValidityUnits:
+        IdToken: hours
+        AccessToken: hours
+        RefreshToken: days
+      SupportedIdentityProviders:
+        - COGNITO
+        #  - Facebook
+        # - Google
+      # CallbackURLs:
+        # - http://localhost:3000
+        # - https://kamarket.kee.vn
+      # LogoutURLs:
+        # - http://localhost:3000
+        # - https://kamarket.kee.vn
+      ReadAttributes:
+        - email
+        - phone_number
+        - name
+        - address
+        - profile
+        - picture
+        - website
+        - zoneinfo
+        - gender
+        - birthdate
+        - locale
+        - custom:vendorId
+      WriteAttributes:
+        - email
+        - phone_number
+        - name
+        - address
+        - locale
+        - picture
+        - website
+        - gender
+        - profile
+
+
+  #####################
+  # User Pools Groups #
+  #####################
+
+  UserPoolAdminGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      Description: Admin users
+      UserPoolId: !Ref UserPool
+      GroupName: Admin
+
+  UserPoolShopGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Properties:
+      Description: Vendors
+      UserPoolId: !Ref UserPool
+      GroupName: Vendor
+
+####################
+#  UserPoolUserGroup:
+#    Type: AWS::Cognito::UserPoolGroup
+#    Properties:
+#      Description: Normal users
+#      UserPoolId: !Ref UserPool
+#      GroupName: User
+
+  ################################
+  # User Pool Identity Providers #
+  ################################
+  #CognitoUserPoolIdentityProviderGoogle:
+  #  Type: AWS::Cognito::UserPoolIdentityProvider
+  #  Properties:
+  #    ProviderName: Google
+  #    AttributeMapping:
+  #      name: name
+  #      email: email
+  #      phone_number: phoneNumbers
+  #    ProviderDetails:
+  #      client_id: ${env:GOOGLE_CLIENT_ID}
+  #      client_secret: ${env:GOOGLE_CLIENT_SECRET}
+  #      authorize_scopes: openid email phone profile
+  #    ProviderType: Google
+  #    UserPoolId: !Ref UserPool
+
+  ############################
+  # CognitoUserPoolIdentityProviderFacebook:
+  #   Type: AWS::Cognito::UserPoolIdentityProvider
+  #   Properties:
+  #     ProviderName: Facebook
+  #     AttributeMapping:
+  #       name: name
+  #       email: email
+  #     ProviderDetails:
+  #       client_id: ${env:FACEBOOK_CLIENT_ID}
+  #       client_secret: ${env:FACEBOOK_CLIENT_SECRET}
+  #       authorize_scopes: public_profile,email
+  #     ProviderType: Facebook
+  #     UserPoolId: !Ref UserPool
+
+  ############################
+  #CognitoUserPoolDomain:
+  #    Type: AWS::Cognito::UserPoolDomain
+  #    Properties:
+  #      Domain: ${self:custom.userPoolDomain}
+  #      UserPoolId: !Ref UserPool
+
+Outputs:
+  UserPoolId:
+    Value: !Ref UserPool
+    Export:
+      Name: UserPoolId
+  UserPoolClientId:
+    Value: !Ref UserPoolClient
+    Export:
+      Name: UserPoolClientId
+
+  # UserPoolDomain:
+    # Value: !Ref CognitoUserPoolDomain

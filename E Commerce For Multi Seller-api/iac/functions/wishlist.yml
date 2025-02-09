@@ -1,0 +1,71 @@
+ConsumerAddToWishlist:
+  handler: functions/wishlist/user-add-wishlist.addToWishlist
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+      Resource:
+        - !GetAtt WishlistTable.Arn
+  events:
+    - http:
+        path: wishlist
+        method: post
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          # claims:
+            # - sub
+          # scopes:
+            # - sub
+
+ConsumerRemoveFromWishlist:
+  handler: functions/wishlist/user-remove-wishlist.removeFromWishlist
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:DeleteItem
+      Resource:
+        - !GetAtt WishlistTable.Arn
+  events:
+    - http:
+        path: wishlist
+        method: delete
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          #claims:
+          #  - sub
+          #scopes:
+          #  - sub
+
+ConsumerWishlists:
+  handler: functions/wishlist/user-wishlist.listWishlists
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+      Resource:
+        - !GetAtt WishlistTable.Arn
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt ProductsTable.Arn
+        - !GetAtt VendorsTable.Arn
+  events:
+    - http:
+        path: wishlist
+        method: get
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          # claims:
+          #   - sub
+          # scopes:
+          #   - sub

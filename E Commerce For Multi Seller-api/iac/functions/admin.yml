@@ -1,0 +1,159 @@
+
+AdminListVendors:
+  handler: functions/admin/admin-list-vendors.adminListVendors
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt VendorsTable.Arn
+        - !Sub ${VendorsTable.Arn}/index/*
+  events:
+    - http:
+        path: /admin/vendors
+        method: get
+        cors: true
+        authorizer:
+         name: AdminAuthorizer
+         type: COGNITO_USER_POOLS
+         arn: !GetAtt UserPool.Arn
+         claims:
+           - sub
+
+
+adminListProducts:
+  handler: functions/admin/admin-list-products.adminListProducts
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt ProductsTable.Arn
+        - !Sub ${ProductsTable.Arn}/index/*
+        - !GetAtt VendorsTable.Arn
+  events:
+    - http:
+        path: /admin/products
+        method: get
+        cors: true
+        authorizer:
+          name: AdminAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+
+adminListOrders:
+  handler: functions/admin/admin-list-orders.adminListOrders
+  description: list all orders for admin
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt OrdersTable.Arn
+        - !Sub ${OrdersTable.Arn}/index/*
+        - !GetAtt AddressTable.Arn
+        - !GetAtt VendorsTable.Arn
+    - Effect: 'Allow'
+      Action:
+        - cognito-idp:ListUsers
+        - cognito-idp:AdminGetUser
+      Resource:
+        - !GetAtt UserPool.Arn
+  events:
+    - http:
+        path: admin/orders
+        method: get
+        cors: true
+        authorizer:
+          name: AdminAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+AdminGetOrder :
+  handler: functions/admin/admin-get-order.adminGetOrder
+  description: admin get order details
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt OrdersTable.Arn
+        - !Sub ${OrdersTable.Arn}/index/*
+        - !GetAtt AddressTable.Arn
+        - !GetAtt VendorsTable.Arn
+    - Effect: 'Allow'
+      Action:
+        - cognito-idp:ListUsers
+        - cognito-idp:AdminGetUser
+      Resource:
+        - !GetAtt UserPool.Arn
+  events:
+    - http:
+        path: admin/orders/{id}
+        method: get
+        cors: true
+        authorizer:
+          name: AdminAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+AdminListUsers:
+  handler: functions/admin/admin-list-users.adminListUsers
+  description: list all users for admin
+  iamRoleStatements:
+   - Effect: 'Allow'
+     Action:
+       - cognito-idp:ListUsers
+     Resource:
+       - !GetAtt UserPool.Arn
+  events:
+    - http:
+        path: admin/users
+        method: get
+        cors: true
+        authorizer:
+          name: AdminAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+AdminUser:
+  handler: functions/admin/admin-users.adminUser
+  description: relate to admin to user
+  iamRoleStatements:
+   - Effect: 'Allow'
+     Action:
+       - cognito-idp:AdminDeleteUser
+       - cognito-idp:AdminDisableUser
+       - cognito-idp:AdminEnableUser
+       - cognito-idp:AdminGetUser
+       - cognito-idp:ListUsers
+     Resource:
+       - !GetAtt UserPool.Arn
+  events:
+    - http:
+        path: admin/user
+        method: post
+        cors: true
+        authorizer:
+          name: AdminAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub

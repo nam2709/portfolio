@@ -1,0 +1,114 @@
+service: bookee
+frameworkVersion: '3'
+configValidationMode: error
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-southeast-2'} # SYDNEY
+
+  apiGateway:
+    binaryMediaTypes:
+      - '*/*'
+
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    REGION: ${self:provider.region}
+    STAGE: ${self:provider.stage}
+
+    TABLE_CATEGORIES_NAME: !Ref CategoriesTable
+    # USER_POOL_ID: !Ref UserPool
+    # USER_POOL_CLIENT_ID: !Ref UserPoolClient
+
+# stages:
+#   dev:
+#     STORAGE_ARN:
+
+# Create an optimized package for our functions
+package:
+  individually: true
+
+functions:
+  - ${file(iac/functions/categories.yml)}
+
+resources:
+  # DynamoDB
+  - ${file(iac/dynamodb.yml)}
+  # Cognito
+  # - ${file(iac/cognito.yml)}
+
+# appSync:
+#   ${file(iac/appsync.yml)}
+
+plugins:
+  - serverless-iam-roles-per-function
+  - serverless-esbuild
+  - serverless-export-env
+  - serverless-offline
+  # - serverless-lift
+  - serverless-plugin-canary-deployments
+
+custom:
+  tableCategoryName: ${self:service}-${sls:stage}-category
+
+  # userPoolName: ${self:service}-${self:provider.stage}-user-pool
+  # userPoolClientName: web
+  # userPoolDomain: ${self:service}-${self:provider.stage}
+
+  esbuild:
+    bundle: true
+    minify: true
+    target: node20
+    packager: yarn
+
+  # bundle:
+  #   linting: true
+  #   esbuild: true
+  #   tsConfig: tsconfig.json
+  #   packager: yarn
+  #   disableForkTsChecker: true
+
+  serverless-offline:
+    httpPort: 4000
+    noPrependStageInUrl: true
+    reloadHandler: true
+
+  export-env:
+    filename: .env
+    overwrite: false
+    enableOffline: true
+
+  # appsync-simulator:
+  #   port: 20002
+  #   wsPort: 20003
+  #   location: '.webpack/service'
+
+# build:
+#   esbuild:
+#     bundle: true
+#     minify: true
+#     sourcemap: true
+#     target: node20
+#     # packager: yarn
+#     tsconfig: 'tsconfig.json'
+
+# constructs:
+#   images:
+#     type: storage
+#     extensions:
+#       bucket:
+#         Properties:
+#           #AccessControl: PublicRead
+#           # OnwershipControls: BucketOwnerPreferred
+#           BucketName: ${self:service}-${sls:stage}-images
+#           # AccessControl: PublicRead
+#           PublicAccessBlockConfiguration:
+#             BlockPublicAcls: false
+#             BlockPublicPolicy: false
+#             IgnorePublicAcls: false
+#             RestrictPublicBuckets: false
+#           OwnershipControls:
+#               Rules:
+#                 - ObjectOwnership: BucketOwnerPreferred

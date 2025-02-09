@@ -1,0 +1,92 @@
+image: node:20-alpine
+
+stages:
+  - build
+  - test
+  - deploy-dev
+  - deploy
+
+cache:
+  paths:
+    - node_modules/
+    - yarn.lock
+
+# build:
+#   stage: build
+#   script:
+#     - yarn install --silent --no-progress
+
+# format test:
+#   stage: test
+#   before_script:
+#     - yarn
+#   script:
+#     - yarn format:check
+
+
+# lint test:
+#   stage: test
+#   before_script:
+#     - yarn
+#   script:
+#     - yarn lint
+
+
+# unit test:
+#   stage: test
+#   before_script:
+#     - yarn
+#   script:
+#     - yarn test:unit
+
+# integration test:
+#   stage: test
+#   before_script:
+#     - yarn
+#   script:
+#     - yarn test:int
+
+# end to end test:
+#   stage: test
+#   before_script:
+#     - yarn
+#   script:
+#     - yarn test:e2e
+
+test:
+  stage: test
+  variables:
+    AWS_REGION: "us-west-2"
+    DYNAMODB_ENDPOINT: "http://dynamodb-local:8000"
+  services:
+    - name: amazon/dynamodb-local:latest
+      alias: dynamodb-local
+  script:
+    - DYNAMODB_LOCAL_URL=http://dynamodb-local:8000
+    - apk add --no-cache curl jq python3 py3-pip
+    - python3 -m venv venv
+    - . venv/bin/activate
+    - yarn install
+    - npm run test
+
+deploy dev:
+  stage: deploy
+  before_script:
+    - yarn
+  script:
+    - yarn deploy:dev
+  environment:
+    name: dev
+  only:
+    - nam_main
+
+deploy production:
+  stage: deploy
+  before_script:
+    - yarn
+  script:
+    - yarn deploy:prod
+  environment:
+    name: production
+  only:
+    - main

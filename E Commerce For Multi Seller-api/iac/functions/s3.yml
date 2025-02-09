@@ -1,0 +1,81 @@
+upload:
+  handler: functions/s3/upload.upload
+  description: user upload a file/image to S3 and save link to dynamodb
+  timeout: 30
+  # memorySize: 512
+  environment:
+    IMGUR_CLIENT_ID: 'dcdbe9a8e35dfef'
+    IMGUR_CLIENT_SECRET: '5b8a7bc928ece0a2b62d12227488be959fa8c02f'
+    # BUCKET_NAME: ${construct:images.bucketName}
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action: '*'
+        # - s3:*
+        # - s3:PutObjectAcl
+        # - s3:PutObjectTagging
+      Resource: '*'
+        # - !Sub ${self:provider.environment.STORAGE_ARN}
+        # - !Sub ${self:provider.environment.STORAGE_ARN}/*
+        # - !Sub arn:aws:s3:::${construct:images.bucketName}
+        # - !Sub arn:aws:s3:::${construct:images.bucketName}/*
+        # - ${self:provider.environment.STORAGE_ARN}/public
+        # - ${self:provider.environment.STORAGE_ARN}/public/*
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:PutItem
+      Resource: !GetAtt StorageTable.Arn
+  events:
+    - http:
+        path: upload
+        method: post
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+
+  #events:
+  #  - s3:
+  #      bucket: ${self:custom.bucket}
+  #      event: s3:ObjectCreated:*
+  #      rules:
+  #        - prefix: uploads/
+          # - suffix: .jpg
+
+list-user-uploaded-files:
+  handler: functions/s3/list-user-uploaded-files.handler
+  description: list all files uploaded by user
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+      Resource:
+        - !GetAtt StorageTable.Arn
+  events:
+    - http:
+        path: /upload
+        method: get
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+
+delete-user-uploaded-files:
+  handler: functions/s3/delete-user-uploaded-files.handler
+  description: delete all files uploaded by user
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:DeleteItem
+      Resource:
+        - !GetAtt StorageTable.Arn
+  events:
+    - http:
+        path: /remove
+        method: post
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn

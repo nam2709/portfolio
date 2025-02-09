@@ -1,0 +1,5 @@
+Resources:
+  KAEventBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: ${self:service}-${sls:stage}-events

@@ -1,0 +1,74 @@
+# placeOrder:
+#   handler: functions/orders/placeOrder.placeOrder
+#   events:
+#     - http:
+#         path: orders
+#         method: post
+#         cors: true
+
+getOrder:
+  handler: functions/orders/user-get-order.userGetOrder
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:Query
+      Resource:
+        - !GetAtt OrdersTable.Arn
+        - !Sub ${OrdersTable.Arn}/index/*
+        - !GetAtt ProductsTable.Arn
+        - !Sub ${ProductsTable.Arn}/index/*
+        - !GetAtt VendorsTable.Arn
+        - !Sub ${VendorsTable.Arn}/index/*
+        - !GetAtt AddressTable.Arn
+    - Effect: 'Allow'
+      Action:
+        - cognito-idp:GetUser
+        - cognito-idp:AdminGetUser
+      Resource: !GetAtt UserPool.Arn
+  events:
+    - http:
+        path: orders/{id}
+        method: get
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+ConsumerListOrders:
+  handler: functions/orders/userListOrders.userListOrders
+  description: List all orders by given userId
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:GetItem
+      Resource:
+        - !GetAtt OrdersTable.Arn
+        - !Sub ${OrdersTable.Arn}/index/*
+  events:
+    - http:
+        path: orders
+        method: get
+        cors: true
+        authorizer:
+          name: UserAuthorizer
+          type: COGNITO_USER_POOLS
+          arn: !GetAtt UserPool.Arn
+          claims:
+            - sub
+
+# checkout:
+#   handler: functions/orders/checkout.checkout
+#   events:
+#     - http:
+#         path: orders/checkout
+#         method: post
+#         cors: true
+
+################## VENDOR #################
+
+################## ADMIN #################
