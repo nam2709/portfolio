@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "id": "3588fc77-275a-4d6e-9509-bfaf6a2937a7",
+            "type": "App\\Notifications\\UpdateRefundRequestNotification",
+            "notifiable_type": "App\\Models\\User",
+            "notifiable_id": "19",
+            "data": {
+                "title": "Yêu cầu hoàn tiền đã được cập nhật!",
+                "message": "Trạng thái yêu cầu hoàn tiền của bạn đã được phê duyệt",
+                "type": "refund"
+            },
+            "created_at": "2024-01-30T08:43:53.000000Z",
+            "updated_at": "2024-01-30T08:44:22.000000Z"
+        }
+    ],
+    "total": 1
+}

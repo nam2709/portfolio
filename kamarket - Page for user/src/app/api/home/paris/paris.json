@@ -1,0 +1,239 @@
+{
+  "id": 1,
+  "content": {
+    "home_banner": {
+      "status": true,
+      "main_banner": {
+        "image_url": "https://kamarket-prod-storage.s3.ap-southeast-1.amazonaws.com/public/vegeta.png",
+        "redirect_link": {
+          "link": "74286176-073d-4886-a8f0-7b524f7f869d",
+          "link_type": "collection"
+        }
+      },
+      "sub_banner_1": {
+        "image_url": "https://kamarket-prod-storage.s3.ap-southeast-1.amazonaws.com/public/thietke.jpg",
+        "redirect_link": {
+          "link": "022e80b8-2557-4f4e-8c25-955147823a8c",
+          "link_type": "collection"
+        }
+      },
+      "sub_banner_2": {
+        "image_url": "https://kamarket-prod-storage.s3.ap-southeast-1.amazonaws.com/public/f3da7bd747f12a7b427ccfd856377897.jpg",
+        "redirect_link": {
+          "link": "2dbb5a03-3a37-479e-9d0a-ddc88a4f731f",
+          "link_type": "collection",
+          "product_ids": 19
+        }
+      }
+    },
+    "featured_banners": {
+      "status": true,
+      "banners": [
+        {
+          "redirect_link": {
+            "link": "a3b2122a-86c6-4488-ae68-976a5d61fd05",
+            "link_type": "collection"
+          },
+          "status": true,
+          "image_url": "https://res.cloudinary.com/dedjnpoj6/image/upload/v1706702577/banner-sale-kamarket/1_vzpy01.png"
+        },
+        {
+          "redirect_link": {
+            "link": "a2013675-1d41-4490-93df-61ae56b58de3",
+            "link_type": "collection"
+          },
+          "status": true,
+          "image_url": "https://kamarket-prod-storage.s3.ap-southeast-1.amazonaws.com/public/watches.png"
+        },
+        {
+          "redirect_link": {
+            "link": "dcd0aa9d-38b5-4931-8d99-d328841fd7ea",
+            "link_type": "collection"
+          },
+          "status": true,
+          "image_url": "https://kamarket-prod-storage.s3.ap-southeast-1.amazonaws.com/public/ezgif-3-f2a0076a8a.png"
+        },
+        {
+          "redirect_link": {
+            "link": "6342ddbe-541b-4644-b6b5-3513242a4a1e",
+            "link_type": "collection"
+          },
+          "status": true,
+          "image_url": "https://kamarket-prod-storage.s3.ap-southeast-1.amazonaws.com/public/ezgif-3-f3959211da.png"
+        },
+        {
+          "redirect_link": {
+            "link": "a3b2122a-86c6-4488-ae68-976a5d61fd05",
+            "link_type": "collection"
+          },
+          "status": true,
+          "image_url": "https://res.cloudinary.com/dedjnpoj6/image/upload/v1706702577/banner-sale-kamarket/1_vzpy01.png"
+        },
+        {
+          "redirect_link": {
+            "link": "a2013675-1d41-4490-93df-61ae56b58de3",
+            "link_type": "collection"
+          },
+          "status": true,
+          "image_url": "https://kamarket-prod-storage.s3.ap-southeast-1.amazonaws.com/public/watches.png"
+        },
+        {
+          "redirect_link": {
+            "link": "dcd0aa9d-38b5-4931-8d99-d328841fd7ea",
+            "link_type": "collection"
+          },
+          "status": true,
+          "image_url": "https://kamarket-prod-storage.s3.ap-southeast-1.amazonaws.com/public/ezgif-3-f2a0076a8a.png"
+        },
+        {
+          "redirect_link": {
+            "link": "6342ddbe-541b-4644-b6b5-3513242a4a1e",
+            "link_type": "collection"
+          },
+          "status": true,
+          "image_url": "https://kamarket-prod-storage.s3.ap-southeast-1.amazonaws.com/public/ezgif-3-f3959211da.png"
+        }
+      ]
+    },
+    "main_content": {
+      "status": true,
+      "sidebar": {
+        "status": true,
+        "categories_icon_list": {
+          "title": "Danh mục phổ biến",
+          "category_ids": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          "status": true
+        },
+        "left_side_banners": {
+          "status": true,
+          "banner_1": {
+            "image_url": "https://react.pixelstrap.net/fastkart/assets/themes/paris/4.jpg",
+            "redirect_link": {
+              "link": "tap-hoa-online",
+              "link_type": "collection"
+            }
+          },
+          "banner_2": {
+            "image_url": "https://react.pixelstrap.net/fastkart/assets/themes/paris/5.jpg",
+            "redirect_link": {
+              "link": "tap-hoa-online",
+              "link_type": "collection"
+            }
+          }
+        },
+        "sidebar_products": {
+          "title": "Trending Products",
+          "status": true,
+          "product_ids": [
+            "15TCLXQH","15TCM99B","15TCMAX4"
+          ]
+        }
+      },
+      "section2_categories_list": {
+        "image_url": null,
+        "title": "Danh Mục",
+        "description": "Uncover Hidden Gems and Culinary Delights",
+        "category_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          10,
+          9
+        ],
+        "status": true
+      },
+      "section1_products": {
+        "title": "FLASH SALE",
+        "description": "Don't miss this opportunity at a special discount just for this week.",
+        "product_ids": [
+          "15UPE9XL","15TCM99B","15TCMAX4"
+        ],
+        "status": true
+      },
+      "section1n_products": {
+        "title": "PRE-ORDER",
+        "description": "Don't miss this opportunity at a special discount just for this week.",
+        "product_ids": [
+          "15UPE9XL","15TCM99B","15TCMAX4"
+        ],
+        "status": true
+      },
+
+      "section3_two_column_banners": {
+        "status": true,
+        "banner_1": {
+          "image_url": "https://kamarket-prod-storage.s3.ap-southeast-1.amazonaws.com/public/heel.jpg",
+          "redirect_link": {
+            "link": "e4271cfd-2d99-4acd-bc0d-ec9017dc0eda",
+            "link_type": "collection"
+          }
+        },
+        "banner_2": {
+          "image_url": "https://kamarket-prod-storage.s3.ap-southeast-1.amazonaws.com/public/fashion_man.png",
+          "redirect_link": {
+            "link": "22d85717-dafd-4fad-a2e0-bafd94827a0f",
+            "link_type": "collection"
+          }
+        }
+      },
+      "section4_products": {
+        "image_url": null,
+        "title": "Tìm kiếm hàng đầu",
+        "description": "Uncover Hidden Gems and Culinary Delights",
+        "category_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          10,
+          9
+        ],
+        "status": true
+      },
+      "section7_products": {
+        "title": "Gợi ý hôm nay",
+        "description": "A virtual assistant collects the products from your list.",
+        "status": true,
+        "product_ids": [
+         "15TCLXQH","15TCM99B","15TCMAX4"
+        ]
+      },
+      "section9_products": {
+        "title": "Tìm kiếm hàng đầu",
+        "description": "Unlocking the Pantry: A Journey into Essential Veggies Staples",
+        "status": true,
+        "product_ids": [
+          "15TCLXQH","15TCM99B","15TCMAX4"
+        ]
+      }
+    },
+    "news_letter": {
+      "title": "Join Our Newsletter And Get...",
+      "sub_title": "$20 discount for your first order",
+      "image_url": "https://react.pixelstrap.net/fastkart/assets/newsletter.jpg",
+      "status": true
+    },
+    "products_ids": [
+      "15TCLXQH","15TCM99B","15TCMAX4"
+    ]
+  },
+  "slug": "paris"
+}

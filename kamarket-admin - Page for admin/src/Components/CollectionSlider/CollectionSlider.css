@@ -1,0 +1,111 @@
+.category-box {
+    background-color: var(--light-gray);
+    margin: 0px auto;
+    display: block;
+    width: 90%;
+    text-align: center;
+    border-radius: 5px;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    padding: calc(15px + (35 - 15) * ((100vw - 320px) / (1920 - 320))) 8px;
+    z-index: 0;
+}
+
+.category-box.category-bg {
+    background: linear-gradient(149.8deg, #f6f5f2 17.21%, #fbfaf9 79.21%);
+}
+
+.category-box::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: var(--theme-color);
+    opacity: 0;
+    z-index: -1;
+    transition: all 0.3s ease-in-out;
+}
+
+.category-box:hover {
+    background-color: transparent;
+}
+
+.category-box:hover::after {
+    opacity: 1;
+}
+
+.category-box:hover img {
+    filter: invert(1) brightness(100%);
+}
+
+.category-box:hover h5 {
+    color: #ffffff;
+}
+/* 
+.category-box-2::after {
+    background-image: url(../../images/cake/bg.jpg);
+} */
+
+.category-box img {
+    width: calc(38px + (45 - 38) * ((100vw - 320px) / (1920 - 320)));
+    height: calc(38px + (45 - 38) * ((100vw - 320px) / (1920 - 320)));
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+html.dark .category-box img {
+    filter: invert(1) brightness(100%);
+}
+
+.category-box h5 {
+    color: var(--title-color);
+    margin-top: 12px;
+    font-weight: 500;
+    line-height: 1.2;
+    height: 38px;
+}
+
+.shop-box .shop-category-box {
+    padding: calc(15px + (35 - 15) * ((100vw - 320px) / (1920 - 320))) 8px;
+    background-color: var(--light-gray);
+    text-align: center;
+    margin: 0 5px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.shop-box .shop-category-box.active::after {
+    opacity: 1;
+}
+
+.shop-box .shop-category-box.active a .shop-category-image img {
+    filter: invert(1) brightness(100%);
+}
+
+.shop-box .shop-category-box.active a .category-box-name h6 {
+    color: #ffffff;
+}
+
+.shop-box .shop-category-box:hover a .category-box-name h6 {
+    color: #ffffff;
+}
+
+.shop-box .shop-category-box a .category-box-name {
+    position: relative;
+    margin-top: 10px;
+    color: var(--title-color);
+}
+
+.shop-box .shop-category-box a .category-box-name h6 {
+    height: 38px;
+    color: var(--content-color);
+    font-weight: 500;
+    line-height: 1.2;
+    font-size: calc(15px + (16 - 15) * ((100vw - 320px) / (1920 - 320)));
+}

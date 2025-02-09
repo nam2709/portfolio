@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "ES2022",
+    "target": "ES6",
+    "moduleResolution": "Bundler",
+    "allowArbitraryExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "allowUnreachableCode": false,
+    "noEmit": true,
+    "allowJs": true,
+    "removeComments": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    },
+  }
+}

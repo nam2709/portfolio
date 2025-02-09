@@ -1,0 +1,26 @@
+version: 1
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            - yarn install --silent
+            # - yarn test
+            # - yarn format:check
+            # - yarn lint
+            - if [ "${AWS_BRANCH}" == "v1" ]; then echo "PRODUCTION"; rm .env.production; cp .env.release .env.production; fi
+            #- if [ "${AWS_BRANCH}" == "master" ]; then echo "PRODUCTION"; rm .env.production; cp .env.release .env.production; fi
+        build:
+          commands:
+            - yarn build
+        test:
+          commands:
+            - yarn test
+      artifacts:
+        baseDirectory: .next
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - .next/cache/**/*
+          - .npm/**/*
